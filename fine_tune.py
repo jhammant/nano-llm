@@ -8,7 +8,14 @@ from tqdm import tqdm  # Progress bar
 
 # ✅ Correct Model Name
 model_name = "meta-llama/Meta-Llama-3-8B"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+# Define the model path
+MODEL_PATH = "meta-llama/Meta-Llama-3-8B"
+
+# Load tokenizer with padding fix
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, padding_side='right')
+
+# Ensure tokenizer has a padding token
+tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
 # Enable QLoRA (Low-Rank Adapters)
