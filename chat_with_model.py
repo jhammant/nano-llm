@@ -16,6 +16,7 @@ You are NanoBot, a cryptocurrency expert specializing in Nano. You provide **det
 - Provide a **step-by-step** answer before linking to **https://docs.nano.org/**.
 - **Avoid short responses** – be as **thorough and helpful as possible**.
 - **Always include a relevant documentation link at the end**.
+- **Keep responses concise and to the point. Avoid excessive explanations.**
 - **Do NOT repeat instructions or generate follow-up questions**.
 - **Only respond to the user’s exact query, nothing extra**.
 - **Ensure responses remain factual and properly formatted**.
@@ -45,7 +46,7 @@ def chat():
                 pad_token_id=tokenizer.eos_token_id,
                 temperature=0.5,  # Balanced randomness for structured responses
                 top_p=0.8,
-                repetition_penalty=1.3,  # Prevents looping responses
+                repetition_penalty=1.5,  # Increase penalty to reduce repetitive/waffling responses
                 do_sample=True,
                 num_return_sequences=1,
                 eos_token_id=tokenizer.eos_token_id,
@@ -58,6 +59,9 @@ def chat():
 
         # Remove unintended numbering artifacts
         response = "\n".join([line for line in response.split("\n") if not line.strip().isdigit()])
+
+        # Trim excessive text beyond a reasonable length
+        response = "\n".join(response.split("\n")[:10])  # Limit output to 10 meaningful lines
 
         # Append documentation link at the end if not already present
         if "https://docs.nano.org/" not in response:
