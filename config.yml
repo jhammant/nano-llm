@@ -1,0 +1,9 @@
+base_model: deepseek-llm:7b
+adapter: qlora
+train_data: nano_docs.jsonl
+output_dir: nano-fine-tune
+epochs: 3
+batch_size: 2
+learning_rate: 2e-5
+use_4bit: true
+save_steps: 100

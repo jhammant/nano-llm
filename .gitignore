@@ -1,0 +1,12 @@
+# Ignore model weights, large files, Hugging Face cache
+*.bin
+*.safetensors
+*.ckpt
+*.pth
+*.h5
+nano-llm/
+__pycache__/
+*.log
+datasets/
+cache/
+output/
