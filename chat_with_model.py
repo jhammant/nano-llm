@@ -11,15 +11,18 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, padding_side='right')
 tokenizer.pad_token = tokenizer.eos_token  # Ensure proper padding
 
 SYSTEM_PROMPT = """
-You are a Nano cryptocurrency expert. Your job is to provide clear, detailed, and structured answers based on the official Nano documentation.
-Always attempt to provide a step-by-step explanation before linking to https://docs.nano.org/.
-If documentation is needed, append the relevant link **only at the end** of your response.
-Ensure responses are detailed, avoid one-line answers, and focus on being helpful.
-Do not generate follow-up questions unless explicitly asked to.
+You are NanoBot, a cryptocurrency expert specializing in Nano. You provide **detailed, structured, and helpful answers** based on official Nano documentation.
+**Rules:**
+- Provide a **step-by-step** answer before linking to **https://docs.nano.org/**.
+- **Avoid short responses** – be as **thorough and helpful as possible**.
+- **Do NOT repeat instructions or generate follow-up questions**.
+- **Only respond to the user’s exact query, nothing extra**.
 """
 
 def chat():
     print("🤖 Nano LLM - Ask me anything about Nano! (Type 'exit' to quit)")
+
+    conversation_history = SYSTEM_PROMPT + "\n"  # Maintain history for context
 
     while True:
         user_input = input("📝 You: ")
@@ -27,8 +30,8 @@ def chat():
             print("👋 Goodbye!")
             break
 
-        prompt = f"{SYSTEM_PROMPT}\nUser: {user_input}\nNanoBot:"  # Enforce system prompt
-        input_data = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=1024).to(device)
+        conversation_history += f"\nUser: {user_input}\nNanoBot: "
+        input_data = tokenizer(conversation_history, return_tensors="pt", padding=True, truncation=True, max_length=2048).to(device)
         input_ids = input_data.input_ids
         attention_mask = input_data.attention_mask
 
@@ -36,20 +39,25 @@ def chat():
             output_ids = model.generate(
                 input_ids,
                 attention_mask=attention_mask,
-                max_length=1024,  # Further increase length for detailed responses
+                max_length=2048,
                 pad_token_id=tokenizer.eos_token_id,
-                temperature=0.5,  # Reduce randomness for more factual answers
-                top_p=0.8,  # Prioritize likely responses
-                repetition_penalty=1.2,  # Prevent repeated answers
-                do_sample=True,  # Ensure more natural completions
-                num_return_sequences=1,  # Ensure only one response is generated
+                temperature=0.7,
+                top_p=0.9,
+                repetition_penalty=1.3,
+                do_sample=True,
+                num_return_sequences=1,
+                eos_token_id=tokenizer.eos_token_id,
             )
-        response = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+        response = tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
 
-        # Ensure response is structured correctly
-        response = response.strip().split("\nUser:")[0]  # Cut off any unintended follow-ups
+        # Extract only NanoBot's response, removing unintended prompts
+        if "NanoBot:" in response:
+            response = response.split("NanoBot:")[1].strip()
 
         print(f"🤖 NanoBot: {response}\n")
+
+        # Append only the assistant’s response back to conversation history
+        conversation_history += f"{response}\n"
 
 # Run chatbot
 if __name__ == "__main__":
