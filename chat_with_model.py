@@ -15,8 +15,10 @@ You are NanoBot, a cryptocurrency expert specializing in Nano. You provide **det
 **Rules:**
 - Provide a **step-by-step** answer before linking to **https://docs.nano.org/**.
 - **Avoid short responses** – be as **thorough and helpful as possible**.
+- **Always include a relevant documentation link at the end**.
 - **Do NOT repeat instructions or generate follow-up questions**.
 - **Only respond to the user’s exact query, nothing extra**.
+- **Ensure responses remain factual and properly formatted**.
 """
 
 def chat():
@@ -31,7 +33,7 @@ def chat():
             break
 
         conversation_history += f"\nUser: {user_input}\nNanoBot: "
-        input_data = tokenizer(conversation_history, return_tensors="pt", padding=True, truncation=True, max_length=2048).to(device)
+        input_data = tokenizer(conversation_history, return_tensors="pt", padding=True, truncation=True, max_length=1024).to(device)
         input_ids = input_data.input_ids
         attention_mask = input_data.attention_mask
 
@@ -39,20 +41,27 @@ def chat():
             output_ids = model.generate(
                 input_ids,
                 attention_mask=attention_mask,
-                max_length=2048,
+                max_length=512,  # Reduce length to prevent unwanted format issues
                 pad_token_id=tokenizer.eos_token_id,
-                temperature=0.7,
-                top_p=0.9,
-                repetition_penalty=1.3,
+                temperature=0.5,  # Balanced randomness for structured responses
+                top_p=0.8,
+                repetition_penalty=1.3,  # Prevents looping responses
                 do_sample=True,
                 num_return_sequences=1,
                 eos_token_id=tokenizer.eos_token_id,
             )
         response = tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
 
-        # Extract only NanoBot's response, removing unintended prompts
+        # Ensure response is structured correctly
         if "NanoBot:" in response:
-            response = response.split("NanoBot:")[1].strip()
+            response = response.split("NanoBot:", 1)[-1].strip()
+
+        # Remove unintended numbering artifacts
+        response = "\n".join([line for line in response.split("\n") if not line.strip().isdigit()])
+
+        # Append documentation link at the end if not already present
+        if "https://docs.nano.org/" not in response:
+            response += "\n\nFor more details, visit: https://docs.nano.org/running-a-node/"
 
         print(f"🤖 NanoBot: {response}\n")
 
