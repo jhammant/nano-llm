@@ -1,0 +1,22 @@
+[
+    {
+        "question": "What is Nano and how does it work?",
+        "expected_answer": "Nano is a decentralized, feeless cryptocurrency that uses a block-lattice structure to enable fast transactions. More details: https://docs.nano.org/what-is-nano/overview/"
+    },
+    {
+        "question": "How do I run a Nano node?",
+        "expected_answer": "To run a Nano node, you need to install the Nano node software and sync with the network. Full guide: https://docs.nano.org/running-a-node/overview/"
+    },
+    {
+        "question": "What is Proof-of-Work in Nano?",
+        "expected_answer": "Nano uses Proof-of-Work (PoW) as an anti-spam measure rather than for consensus. Details: https://docs.nano.org/protocol-design/proof-of-work/"
+    },
+    {
+        "question": "How do I send a transaction in Nano?",
+        "expected_answer": "To send a transaction in Nano, use a wallet that supports Nano and broadcast the transaction to the network. Guide: https://docs.nano.org/integration-guides/sending-transactions/"
+    },
+    {
+        "question": "Where can I find the RPC commands for Nano?",
+        "expected_answer": "Nano provides an RPC interface for interacting with the network. Full list of commands: https://docs.nano.org/commands/rpc-protocol/"
+    }
+]

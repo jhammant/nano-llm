@@ -7,9 +7,9 @@ from peft import LoraConfig, get_peft_model
 from tqdm import tqdm  # Progress bar
 
 # ✅ Correct Model Name
-model_name = "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
-tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=True)
-model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16, use_auth_token=True)
+model_name = "meta-llama/Meta-Llama-3-8B"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
 
 # Enable QLoRA (Low-Rank Adapters)
 lora_config = LoraConfig(
